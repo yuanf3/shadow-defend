@@ -19,6 +19,8 @@ public class Level {
     private final TiledMap map;
     private final List<Point> polyline;
     private final List<Slicer> slicers;
+    private final BuyPanel bPanel;
+    private final StatusPanel sPanel;
     private final Player player;
 
     private boolean levelFinished;
@@ -33,6 +35,8 @@ public class Level {
         map = new TiledMap("res/levels/" + levelNumber + ".tmx");
         polyline = map.getAllPolylines().get(0);
         slicers = new ArrayList<>();
+        bPanel = new BuyPanel();
+        sPanel = new StatusPanel();
         player = new Player();
 
         levelFinished = false;
@@ -61,6 +65,7 @@ public class Level {
         frameCount = Integer.MAX_VALUE;
         repeats = 0;
         waveStarted = false;
+        ShadowDefend.setStatus("Awaiting Start");
     }
 
     private void spawnSlicer(String spawnType) {
@@ -88,12 +93,15 @@ public class Level {
 
     public void update(Input input) {
         map.draw(0, 0, 0, 0, ShadowDefend.WIDTH, ShadowDefend.HEIGHT);
+        sPanel.drawPanel(currentWaveNumber, ShadowDefend.getStatus(), player.getLives());
 
         if (input.wasPressed(Keys.S)) {
             waveStarted = true;
         }
 
         if (waveStarted) {
+            ShadowDefend.setStatus("Wave in Progress");
+
             Event currentEvent = waves.get(currentWaveNumber).get(currentEventNumber);
             int numRepeats = currentEvent.getNumRepeats();
             int duration = currentEvent.getDuration();

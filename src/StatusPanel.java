@@ -17,7 +17,7 @@ public class StatusPanel {
         PANEL_IMAGE.draw(centreX, centreY);
 
         // Display wave number
-        FONT.drawString("Wave: " + (currentWave+1), 3, VERT_OFFSET + 19);
+        FONT.drawString("Wave: " + currentWave, 3, VERT_OFFSET + 19);
 
         // Display timescale
         if (ShadowDefend.getTimescale() == 1) {

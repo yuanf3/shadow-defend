@@ -23,7 +23,7 @@ public class ShadowDefend extends AbstractGame {
     private static final int NUM_LEVELS = 2;
 
     private static int timescale = INITIAL_TIMESCALE;
-    private static String status = "Awaiting Start";
+    private static String status;
     private int currentLevel;
     private Level level;
 
@@ -82,6 +82,11 @@ public class ShadowDefend extends AbstractGame {
      */
     @Override
     protected void update(Input input) {
+        // Exit game
+        if (input.wasPressed(Keys.ESCAPE)) {
+            Window.close();
+        }
+
         // Handle timescale changes
         if (input.wasPressed(Keys.L)) {
             increaseTimescale();
