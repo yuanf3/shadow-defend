@@ -4,6 +4,8 @@ import bagel.util.Point;
 
 public class Button extends Sprite {
 
+    public static final 
+
     public Button(Point point, String sprite) {
         super(point, sprite);
     }
