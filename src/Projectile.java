@@ -16,6 +16,14 @@ public class Projectile extends Sprite {
 
     private boolean collided;
 
+    /**
+     * Creates a new Projectile
+     *
+     * @param towerPosition The Point where the Projectile was fired from
+     * @param sprite The image file of the Projectile
+     * @param damage The damage dealt by the Projectile
+     * @param target The target Slicer of the Projectile
+     */
     public Projectile(Point towerPosition, String sprite, int damage, Slicer target) {
         super(towerPosition, SPRITE_PATH + sprite);
         this.damage = damage;
@@ -24,15 +32,15 @@ public class Projectile extends Sprite {
     }
 
     /**
-     * Checks for collision between projectile and slicer. If so, deals damage to slicer
+     * Checks for collision between Projectile and Slicers. If so, deals damage to Slicer
      *
-     * @param slicers List of slicers in the current game state
-     * @return true if projectile has collided, false otherwise
+     * @param slicers List of Slicers in the current game state
+     * @return true if Projectile has collided, false otherwise
      */
     private boolean checkCollision(List<Slicer> slicers) {
-        for (Slicer s : slicers) {
-            if (s.getRect().intersects(this.getRect())) {
-                s.takeDamage(damage);
+        for (Slicer slicer : slicers) {
+            if (slicer.getRect().intersects(this.getCenter())) {
+                slicer.takeDamage(damage);
                 return true;
             }
         }
@@ -40,10 +48,10 @@ public class Projectile extends Sprite {
     }
 
     /**
-     * Updates the current state of the projectile. The projectile moves towards its target slicer,
-     * checking for collision with any slicers.
+     * Updates the current state of the Projectile. The Projectile moves towards its target Slicer,
+     * checking for collision with any Slicers.
      *
-     * @param slicers List of slicers in the current game state
+     * @param slicers List of Slicers in the current game state
      */
     public void update(List<Slicer> slicers) {
         Point currentPoint = getCenter();

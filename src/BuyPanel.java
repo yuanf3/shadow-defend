@@ -18,9 +18,15 @@ public class BuyPanel {
     private static final Font MONEY_FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 48);
 
     // Purchase item buttons
-    private static final PurchaseItem b1 = new PurchaseItem(new Point(64,40), "tank.png");
-    private static final PurchaseItem b2 = new PurchaseItem(new Point(184,40), "supertank.png");
+    private static final PurchaseItem B1 = new PurchaseItem(new Point(64,40), "tank.png");
+    private static final PurchaseItem B2 = new PurchaseItem(new Point(184,40), "supertank.png");
+    private static final PurchaseItem B3 = new PurchaseItem(new Point(304,40), "airsupport.png");
 
+    /**
+     * Draws the BuyPanel
+     *
+     * @param money The amount of money to display
+     */
     public void drawPanel(int money) {
         PANEL_IMAGE.drawFromTopLeft(0, 0);
 
@@ -34,7 +40,7 @@ public class BuyPanel {
         double keyBindsTextWidth = KEYBINDS_FONT.getWidth(keyBindsText);
         KEYBINDS_FONT.drawString(keyBindsText, (panelWidth - keyBindsTextWidth) / 2, 20);
 
-        // Display money
+        // Display available money
         String moneyText = "$" + money;
         MONEY_FONT.drawString(moneyText, 824, 65);
     }
@@ -46,8 +52,9 @@ public class BuyPanel {
         return PANEL_IMAGE.getBoundingBox();
     }
 
-    public void update(TiledMap map, Player player, List<Tower> towers, Input input) {
-        b1.update(map, player, towers, input);
-        b2.update(map, player, towers, input);
+    public void update(TiledMap map, Player player, List<Tower> towers, List<Airplane> airplanes, Input input) {
+        B1.update(map, player, towers, airplanes, input);
+        B2.update(map, player, towers, airplanes, input);
+        B3.update(map, player, towers, airplanes, input);
     }
 }

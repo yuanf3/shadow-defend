@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Level class. Handles most of the game behaviour
+ */
 public class Level {
 
     private static final String WAVE_FILE = "res/levels/waves.txt";
@@ -21,6 +24,7 @@ public class Level {
     private final List<Slicer> slicers;
     private final List<Tower> towers;
     private final List<Projectile> projectiles;
+    private final List<Airplane> airplanes;
     private final BuyPanel bPanel;
     private final StatusPanel sPanel;
     private final Player player;
@@ -34,7 +38,7 @@ public class Level {
     private boolean waveStarted;
 
     /**
-     * Creates a new Level class, which handles all game behaviour except time scale
+     * Creates a new Level object, which handles all game behaviour except time scale
      *
      * @param levelNumber The level number (either 1 or 2)
      */
@@ -46,6 +50,7 @@ public class Level {
         slicers = new ArrayList<>();
         towers = new ArrayList<>();
         projectiles = new ArrayList<>();
+        airplanes = new ArrayList<>();
         player = new Player();
         bPanel = new BuyPanel();
         sPanel = new StatusPanel();
@@ -82,18 +87,19 @@ public class Level {
         frameCount = Integer.MAX_VALUE;
         repeats = 0;
         waveStarted = false;
+        projectiles.clear();
         ShadowDefend.setStatus("Awaiting Start");
     }
 
     private void drawPanels() {
-        sPanel.drawPanel(currentWaveNumber, ShadowDefend.getStatus(), player.getLives());
+        sPanel.drawPanel(currentWaveNumber, player.getLives());
         bPanel.drawPanel(player.getMoney());
     }
 
     /**
-     * Spawns a slicer at the start of the polyline
+     * Spawns a Slicer at the start of the polyline
      *
-     * @param spawnType String representing the type of slicer to spawn in
+     * @param spawnType String representing the type of Slicer to spawn in
      */
     public void spawnSlicer(String spawnType) {
         switch (spawnType) {
@@ -119,7 +125,7 @@ public class Level {
     }
 
     /**
-     * Updates the current state of the game. Keeps track of HUD, wave progress, active slicers, towers
+     * Updates the current state of the game. Keeps track of HUD, wave progress, game entities
      */
     public void update(Input input) {
         map.draw(0, 0, 0, 0, ShadowDefend.WIDTH, ShadowDefend.HEIGHT);
@@ -130,10 +136,21 @@ public class Level {
             }
         }
 
+        // Update towers
         for (Tower tower : towers) {
             tower.update(slicers, projectiles);
         }
 
+        // Update airplanes
+        for (int i = airplanes.size() - 1; i >= 0; i--) {
+            Airplane airplane = airplanes.get(i);
+            airplane.update(slicers);
+            if (airplane.isFinished()) {
+                airplanes.remove(i);
+            }
+        }
+
+        // Update projectiles
         for (int i = projectiles.size() - 1; i >= 0; i--) {
             Projectile projectile = projectiles.get(i);
             projectile.update(slicers);
@@ -159,6 +176,7 @@ public class Level {
                 }
             }
 
+            // Update slicers
             for (int i = slicers.size() - 1; i >= 0; i--) {
                 Slicer slicer = slicers.get(i);
                 slicer.update();
@@ -198,6 +216,6 @@ public class Level {
         }
 
         drawPanels();
-        bPanel.update(map, player, towers, input);
+        bPanel.update(map, player, towers, airplanes, input);
     }
 }

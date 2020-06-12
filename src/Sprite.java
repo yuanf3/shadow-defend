@@ -1,12 +1,11 @@
 import bagel.DrawOptions;
 import bagel.Image;
-import bagel.Input;
 import bagel.util.Point;
 import bagel.util.Rectangle;
 import bagel.util.Vector2;
 
 /**
- * Represents a game entity
+ * Sprite class. Represents a game entity
  */
 public abstract class Sprite {
 
@@ -15,10 +14,10 @@ public abstract class Sprite {
     private double angle;
 
     /**
-     * Creates a new Sprite (game entity)
+     * Creates a new Sprite
      *
-     * @param point    The starting point for the entity
-     * @param imageSrc The image which will be rendered at the entity's point
+     * @param point    The starting Point for the entity
+     * @param imageSrc The image which will be rendered at the point
      */
     public Sprite(Point point, String imageSrc) {
         this.image = new Image(imageSrc);
@@ -33,7 +32,7 @@ public abstract class Sprite {
     /**
      * Moves the Sprite by a specified delta
      *
-     * @param dx The move delta vector
+     * @param dx The delta vector
      */
     public void move(Vector2 dx) {
         rect.moveTo(rect.topLeft().asVector().add(dx).asPoint());
@@ -48,7 +47,7 @@ public abstract class Sprite {
     }
 
     /**
-     * Updates the Sprite. Default behaviour is to render the Sprite at its current position.
+     * Updates the Sprite. Renders the Sprite at its current position (central point).
      */
     public void update() {
         image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));

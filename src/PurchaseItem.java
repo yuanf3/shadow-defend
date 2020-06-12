@@ -17,8 +17,14 @@ public class PurchaseItem extends Sprite {
     private final String type;
     private final int price;
     private boolean selected;
-    private boolean placeable;
+    private boolean allowed;
 
+    /**
+     * Creates a new PurchaseItem
+     *
+     * @param point The Point to draw the PurchaseItem button
+     * @param sprite TThe image file of the PurchaseItem
+     */
     public PurchaseItem(Point point, String sprite) {
         super(point, SPRITE_PATH + sprite);
         this.indicator = new Image(SPRITE_PATH + sprite);
@@ -30,33 +36,24 @@ public class PurchaseItem extends Sprite {
             case "supertank.png":
                 price = SuperTank.getCOST();
                 break;
+            case "airsupport.png":
+                price = Airplane.getCOST();
+                break;
             default:
                 price = 0;
                 break;
         }
         selected = false;
-        placeable = false;
+        allowed = false;
     }
 
     /**
-     * Checks if the mouse is outside the game window
+     * Checks if a Tower can be placed
      *
      * @param mouseLoc The current position of the mouse
-     * @return true if mouse is outside window, otherwise false
-     */
-    private boolean isOutsideWindow(Point mouseLoc) {
-        double x = mouseLoc.x;
-        double y = mouseLoc.y;
-        return (x < 0 || y < 0 || x > ShadowDefend.WIDTH || y > ShadowDefend.HEIGHT);
-    }
-
-    /**
-     * Checks if a tower can be placed
-     *
-     * @param mouseLoc The current position of the mouse
-     * @param map The current map, containing blocked and unblocked tiles
-     * @param towers List of towers in the current game state
-     * @return true if tower can be placed, otherwise false
+     * @param map The current TiledMap, containing blocked and unblocked tiles
+     * @param towers List of Towers in the current game state
+     * @return true if Tower can be placed, otherwise false
      */
     private boolean isPlaceable(Point mouseLoc, TiledMap map, List<Tower> towers) {
         if (map.getPropertyBoolean((int) mouseLoc.x, (int) mouseLoc.y, "blocked", false)) {
@@ -68,8 +65,8 @@ public class PurchaseItem extends Sprite {
         if (StatusPanel.getBoundingBox().intersects(mouseLoc)) {
             return false;
         }
-        for (Tower t : towers) {
-            if (t.getRect().intersects(mouseLoc)) {
+        for (Tower tower : towers) {
+            if (tower.getRect().intersects(mouseLoc)) {
                 return false;
             }
         }
@@ -79,11 +76,11 @@ public class PurchaseItem extends Sprite {
     /**
      * Draws button for the PurchaseItem, handles mouse interactions
      *
-     * @param map The current map
-     * @param player The current player
-     * @param towers List of towers in the current game state
+     * @param map The current TiledMap
+     * @param player The current Player
+     * @param towers List of Towers in the current game state
      */
-    public void update(TiledMap map, Player player, List<Tower> towers, Input input) {
+    public void update(TiledMap map, Player player, List<Tower> towers, List<Airplane> airplanes, Input input) {
         super.update();
 
         // Display price of PurchaseItem
@@ -99,11 +96,11 @@ public class PurchaseItem extends Sprite {
                 textColour);
 
         Point mouseLoc = input.getMousePosition();
-        if (isOutsideWindow(mouseLoc)) {
+        if (ShadowDefend.isOutsideWindow(mouseLoc)) {
             return;
         }
 
-        // Left click to select PurchaseItem, or to place tower
+        // Left click to select PurchaseItem, or to place a tower
         if (input.wasPressed(MouseButtons.LEFT)) {
             if (!selected) {
                 if (getRect().intersects(mouseLoc)) {
@@ -113,7 +110,7 @@ public class PurchaseItem extends Sprite {
                     }
                 }
             }
-            else if (placeable) {
+            else if (allowed) {
                 switch (type) {
                     case "tank.png":
                         towers.add(new Tank(mouseLoc));
@@ -121,10 +118,12 @@ public class PurchaseItem extends Sprite {
                     case "supertank.png":
                         towers.add(new SuperTank(mouseLoc));
                         break;
+                    case "airsupport.png":
+                        airplanes.add(new Airplane(mouseLoc));
+                        break;
                 }
                 player.reduceMoney(price);
                 selected = false;
-                placeable = false;
             }
         }
 
@@ -137,10 +136,10 @@ public class PurchaseItem extends Sprite {
         if (selected) {
             if (isPlaceable(mouseLoc, map, towers)) {
                 indicator.draw(mouseLoc.x, mouseLoc.y);
-                placeable = true;
+                allowed = true;
             }
             else {
-                placeable = false;
+                allowed = false;
             }
         }
     }

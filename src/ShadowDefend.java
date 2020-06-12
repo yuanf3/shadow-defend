@@ -2,10 +2,7 @@ import bagel.AbstractGame;
 import bagel.Input;
 import bagel.Keys;
 import bagel.Window;
-import bagel.map.TiledMap;
 import bagel.util.Point;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ShadowDefend, a tower defence game.
@@ -58,6 +55,18 @@ public class ShadowDefend extends AbstractGame {
     }
 
     /**
+     * Checks if the given point is outside the game window
+     *
+     * @param point A point
+     * @return true if point is outside window, otherwise false
+     */
+    public static boolean isOutsideWindow(Point point) {
+        double x = point.x;
+        double y = point.y;
+        return (x < 0 || y < 0 || x > WIDTH || y > HEIGHT);
+    }
+
+    /**
      * Increases the timescale by 1
      */
     private void increaseTimescale() {
@@ -76,7 +85,7 @@ public class ShadowDefend extends AbstractGame {
     }
 
     /**
-     * Updates the state of the game, potentially reading from input
+     * Updates the state of the game
      *
      * @param input The current mouse/keyboard state
      */

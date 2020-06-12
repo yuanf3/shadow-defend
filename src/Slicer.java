@@ -1,8 +1,6 @@
-import bagel.Input;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +23,14 @@ public abstract class Slicer extends Sprite {
     /**
      * Creates a new Slicer
      *
-     * @param polyline The polyline that the slicer must traverse (must have at least 1 point)
+     * @param start The Point to begin at
+     * @param polyline The polyline to traverse (must have at least 1 point)
+     * @param targetPointIndex The immediate next Point of the polyline
+     * @param health The amount of health to begin with
+     * @param speed The movement speed in pixels/second
+     * @param reward The amount of money awarded to the Player if dead
+     * @param penalty The amount of lives deducted from the Player if finished
+     * @param sprite The image file of the Slicer
      */
     public Slicer(Point start, List<Point> polyline, int targetPointIndex, int health, double speed, int reward, int penalty, String sprite) {
         super(start, SPRITE_PATH + sprite);
@@ -40,9 +45,9 @@ public abstract class Slicer extends Sprite {
     }
 
     /**
-     * Spawns child slicers upon death
+     * Spawns child Slicers upon death
      *
-     * @param slicers List of slicers in the current game state
+     * @param slicers List of Slicers in the current game state
      */
     public abstract void spawnOnDeath(List<Slicer> slicers);
 
@@ -51,8 +56,8 @@ public abstract class Slicer extends Sprite {
     }
 
     /**
-     * Updates the current state of the slicer. The slicer moves towards its next target point in
-     * the polyline at its specified movement rate.
+     * Updates the current state of the Slicer. The Slicer moves towards its next target point in
+     * the polyline.
      */
     public void update() {
         if (currentHealth <= 0) {
@@ -60,25 +65,21 @@ public abstract class Slicer extends Sprite {
             return;
         }
 
-        if (finished) {
-            return;
-        }
-
         // Obtain current and target points, convert to vectors
         Point currentPoint = getCenter();
         Point targetPoint = polyline.get(targetPointIndex);
-        Vector2 target = targetPoint.asVector();
-        Vector2 current = currentPoint.asVector();
-        Vector2 direction = target.sub(current);
+        Vector2 targetVector = targetPoint.asVector();
+        Vector2 currentVector = currentPoint.asVector();
+        Vector2 direction = targetVector.sub(currentVector);
         double distance = direction.length();
-        // Check if close to target point
+        // Check if slicer is close to its target point
         if (distance < speed * ShadowDefend.getTimescale()) {
-            // Check if we have reached the end
+            // Check if slicer has reached the end of the polyline
             if (targetPointIndex == polyline.size() - 1) {
                 finished = true;
                 return;
             } else {
-                // Target the next point in the polyline
+                // Otherwise, target the next point in the polyline
                 targetPointIndex++;
             }
         }

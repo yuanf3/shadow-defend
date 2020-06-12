@@ -2,6 +2,9 @@ import bagel.util.Point;
 
 import java.util.List;
 
+/**
+ * SuperTank class, a subclass of Tower
+ */
 public class SuperTank extends Tower {
 
     private static final int RADIUS = 150;
@@ -13,6 +16,11 @@ public class SuperTank extends Tower {
 
     private final Point position;
 
+    /**
+     * Creates a new SuperTank
+     *
+     * @param position The SuperTank's (fixed ) location Point
+     */
     public SuperTank(Point position) {
         super(position, RADIUS, COOLDOWN, SPRITE);
         this.position = position;

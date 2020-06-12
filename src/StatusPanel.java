@@ -15,7 +15,13 @@ public class StatusPanel {
     private static final Image PANEL_IMAGE = new Image("res/images/statuspanel.png");
     private static final Font FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 20);
 
-    public void drawPanel(int currentWave, String status, int lives) {
+    /**
+     * Draws the StatusPanel
+     *
+     * @param currentWave The number of the current wave
+     * @param lives The number of Player lives remaining
+     */
+    public void drawPanel(int currentWave, int lives) {
         PANEL_IMAGE.drawFromTopLeft(X_OFFSET, Y_OFFSET);
 
         // Display wave number

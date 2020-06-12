@@ -1,3 +1,6 @@
+/**
+ * Event class. Represents a wave event
+ */
 public class Event {
 
     private int numRepeats;
@@ -7,7 +10,7 @@ public class Event {
     /**
      * Creates a new Event
      *
-     * @param line A line of text read from the waves text file
+     * @param line A line of text read from the waves text file, specifying a single Event
      */
     public Event(String line) {
         String[] columns = line.split(",");

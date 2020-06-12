@@ -2,6 +2,9 @@ import bagel.util.Point;
 
 import java.util.List;
 
+/**
+ * Tank class, a subclass of Tower
+ */
 public class Tank extends Tower {
 
     private static final int RADIUS = 100;
@@ -13,6 +16,11 @@ public class Tank extends Tower {
 
     private final Point position;
 
+    /**
+     * Creates a new Tank
+     *
+     * @param position The Tank's (fixed ) location Point
+     */
     public Tank(Point position) {
         super(position, RADIUS, COOLDOWN, SPRITE);
         this.position = position;
