@@ -1,17 +1,25 @@
 import bagel.Font;
 import bagel.Image;
 import bagel.Input;
+import bagel.map.TiledMap;
 import bagel.util.Point;
+import bagel.util.Rectangle;
 
+import java.util.List;
+
+/**
+ * BuyPanel class
+ */
 public class BuyPanel {
 
+    // Panel image and fonts
     private static final Image PANEL_IMAGE = new Image("res/images/buypanel.png");
     private static final Font KEYBINDS_FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 14);
     private static final Font MONEY_FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 48);
 
-    private static final Button button1 = new Button(new Point(64,40), "res/images/tank.png");
-    private static final Button button2 = new Button(new Point(184,40), "res/images/supertank.png");
-    private static final Button button3 = new Button(new Point(304,40), "res/images/airsupport.png");
+    // Purchase item buttons
+    private static final PurchaseItem b1 = new PurchaseItem(new Point(64,40), "tank.png");
+    private static final PurchaseItem b2 = new PurchaseItem(new Point(184,40), "supertank.png");
 
     public void drawPanel(int money) {
         PANEL_IMAGE.drawFromTopLeft(0, 0);
@@ -31,9 +39,15 @@ public class BuyPanel {
         MONEY_FONT.drawString(moneyText, 824, 65);
     }
 
-    public void update(Input input) {
-        button1.update(input);
-        button2.update(input);
-        button3.update(input);
+    /**
+     * @return Bounding box of the panel
+     */
+    public static Rectangle getBoundingBox() {
+        return PANEL_IMAGE.getBoundingBox();
+    }
+
+    public void update(TiledMap map, Player player, List<Tower> towers, Input input) {
+        b1.update(map, player, towers, input);
+        b2.update(map, player, towers, input);
     }
 }

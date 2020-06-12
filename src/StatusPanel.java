@@ -3,7 +3,11 @@ import bagel.Font;
 import bagel.Image;
 import bagel.util.Colour;
 import bagel.util.Point;
+import bagel.util.Rectangle;
 
+/**
+ * StatusPanel class
+ */
 public class StatusPanel {
 
     private static final int X_OFFSET = 0;
@@ -18,21 +22,30 @@ public class StatusPanel {
         FONT.drawString("Wave: " + currentWave, X_OFFSET+ 3, Y_OFFSET + 19);
 
         // Display timescale
+        DrawOptions textColour;
         if (ShadowDefend.getTimescale() == 1) {
-            FONT.drawString("Time Scale: " + (double) ShadowDefend.getTimescale(),
-                    X_OFFSET + 200,
-                    Y_OFFSET + 19);
+            textColour = new DrawOptions();
         } else {
-            FONT.drawString("Time Scale: " + (double) ShadowDefend.getTimescale(),
-                    X_OFFSET + 200,
-                    Y_OFFSET + 19,
-                    new DrawOptions().setBlendColour(Colour.GREEN));
+            textColour = new DrawOptions().setBlendColour(Colour.GREEN);
         }
+        FONT.drawString("Time Scale: " + (double) ShadowDefend.getTimescale(),
+                X_OFFSET + 200,
+                Y_OFFSET + 19,
+                textColour);
 
         // Display status
-        FONT.drawString("Status: " + status, X_OFFSET + 420, Y_OFFSET + 19);
+        FONT.drawString("Status: " + ShadowDefend.getStatus(), X_OFFSET + 420, Y_OFFSET + 19);
 
         // Display lives
         FONT.drawString("Lives: " + lives, X_OFFSET + 920, Y_OFFSET + 19);
+    }
+
+    /**
+     * @return Bounding box of the panel
+     */
+    public static Rectangle getBoundingBox() {
+        Rectangle bb = PANEL_IMAGE.getBoundingBox();
+        bb.moveTo(new Point(X_OFFSET, Y_OFFSET));
+        return bb;
     }
 }

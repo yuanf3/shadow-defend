@@ -16,11 +16,11 @@ public abstract class Slicer extends Sprite {
     private final int reward;
     private final int penalty;
     private final List<Point> polyline;
+
     private int currentHealth;
     private int targetPointIndex;
     private boolean finished;
     private boolean dead;
-    private int lifetime;
 
     /**
      * Creates a new Slicer
@@ -37,22 +37,29 @@ public abstract class Slicer extends Sprite {
         currentHealth = health;
         finished = false;
         dead = false;
-        lifetime = 120;
     }
 
+    /**
+     * Spawns child slicers upon death
+     *
+     * @param slicers List of slicers in the current game state
+     */
     public abstract void spawnOnDeath(List<Slicer> slicers);
+
+    public void takeDamage(int damage) {
+        currentHealth -= damage;
+    }
 
     /**
      * Updates the current state of the slicer. The slicer moves towards its next target point in
      * the polyline at its specified movement rate.
      */
-    @Override
-    public void update(Input input) {
-        lifetime--;
-        if (lifetime == 0) {
+    public void update() {
+        if (currentHealth <= 0) {
             dead = true;
             return;
         }
+
         if (finished) {
             return;
         }
@@ -79,7 +86,7 @@ public abstract class Slicer extends Sprite {
         // Update the sprite
         super.move(direction.normalised().mul(speed * ShadowDefend.getTimescale()));
         super.setAngle(Math.atan2(targetPoint.y - currentPoint.y, targetPoint.x - currentPoint.x));
-        super.update(input);
+        super.update();
     }
 
     public boolean isFinished() {

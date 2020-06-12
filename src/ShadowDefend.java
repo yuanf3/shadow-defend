@@ -99,7 +99,7 @@ public class ShadowDefend extends AbstractGame {
         level.update(input);
 
         // Check for level completion
-        if (level.levelComplete()) {
+        if (level.isLevelFinished()) {
             if (currentLevel < NUM_LEVELS) {
                 // Reset game state, go to next level
                 currentLevel++;

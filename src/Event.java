@@ -4,6 +4,11 @@ public class Event {
     private String spawnType;
     private int duration;
 
+    /**
+     * Creates a new Event
+     *
+     * @param line A line of text read from the waves text file
+     */
     public Event(String line) {
         String[] columns = line.split(",");
         // Spawn event

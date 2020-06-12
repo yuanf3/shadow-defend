@@ -1,6 +1,5 @@
 import bagel.Input;
 import bagel.Keys;
-import bagel.MouseButtons;
 import bagel.map.TiledMap;
 import bagel.util.Point;
 
@@ -21,17 +20,24 @@ public class Level {
     private final List<Point> polyline;
     private final List<Slicer> slicers;
     private final List<Tower> towers;
+    private final List<Projectile> projectiles;
     private final BuyPanel bPanel;
     private final StatusPanel sPanel;
     private final Player player;
 
     private boolean levelFinished;
+
     private int currentWaveNumber;
     private int currentEventNumber;
     private double frameCount;
     private int repeats;
     private boolean waveStarted;
 
+    /**
+     * Creates a new Level class, which handles all game behaviour except time scale
+     *
+     * @param levelNumber The level number (either 1 or 2)
+     */
     public Level(int levelNumber) {
         waves = new HashMap<>();
         map = new TiledMap("res/levels/" + levelNumber + ".tmx");
@@ -39,6 +45,7 @@ public class Level {
 
         slicers = new ArrayList<>();
         towers = new ArrayList<>();
+        projectiles = new ArrayList<>();
         player = new Player();
         bPanel = new BuyPanel();
         sPanel = new StatusPanel();
@@ -49,6 +56,9 @@ public class Level {
         setWaveVariables();
     }
 
+    /**
+     * Reads the waves text file, populating the hashmap of wave events
+     */
     private void readWavesFile() {
         try (BufferedReader in = new BufferedReader(new FileReader(WAVE_FILE))) {
             String line;
@@ -63,6 +73,9 @@ public class Level {
         }
     }
 
+    /**
+     * Reset variables for the start of the next wave
+     */
     private void setWaveVariables() {
         currentWaveNumber++;
         currentEventNumber = 0;
@@ -77,6 +90,11 @@ public class Level {
         bPanel.drawPanel(player.getMoney());
     }
 
+    /**
+     * Spawns a slicer at the start of the polyline
+     *
+     * @param spawnType String representing the type of slicer to spawn in
+     */
     public void spawnSlicer(String spawnType) {
         switch (spawnType) {
             case "slicer":
@@ -96,19 +114,32 @@ public class Level {
         }
     }
 
-    public boolean levelComplete() {
+    public boolean isLevelFinished() {
         return levelFinished;
     }
 
+    /**
+     * Updates the current state of the game. Keeps track of HUD, wave progress, active slicers, towers
+     */
     public void update(Input input) {
         map.draw(0, 0, 0, 0, ShadowDefend.WIDTH, ShadowDefend.HEIGHT);
 
         if (input.wasPressed(Keys.S)) {
-            waveStarted = true;
+            if (!waveStarted) {
+                waveStarted = true;
+            }
         }
 
-        for (Tower t : towers) {
-            t.update(input);
+        for (Tower tower : towers) {
+            tower.update(slicers, projectiles);
+        }
+
+        for (int i = projectiles.size() - 1; i >= 0; i--) {
+            Projectile projectile = projectiles.get(i);
+            projectile.update(slicers);
+            if (projectile.isCollided()) {
+                projectiles.remove(i);
+            }
         }
 
         if (waveStarted) {
@@ -130,7 +161,7 @@ public class Level {
 
             for (int i = slicers.size() - 1; i >= 0; i--) {
                 Slicer slicer = slicers.get(i);
-                slicer.update(input);
+                slicer.update();
                 if (slicer.isDead()) {
                     int reward = slicer.getReward();
                     player.rewardMoney(reward);
@@ -158,6 +189,7 @@ public class Level {
                             player.rewardMoney(reward);
                             setWaveVariables(); // End of wave
                         } else {
+                            waveStarted = false;
                             levelFinished = true; // End of level
                         }
                     }
@@ -166,6 +198,6 @@ public class Level {
         }
 
         drawPanels();
-        bPanel.update(input);
+        bPanel.update(map, player, towers, input);
     }
 }

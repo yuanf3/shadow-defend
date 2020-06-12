@@ -50,7 +50,7 @@ public abstract class Sprite {
     /**
      * Updates the Sprite. Default behaviour is to render the Sprite at its current position.
      */
-    public void update(Input input) {
+    public void update() {
         image.draw(getCenter().x, getCenter().y, new DrawOptions().setRotation(angle));
     }
 }
