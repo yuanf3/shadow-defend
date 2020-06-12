@@ -10,8 +10,16 @@ public class ApexSlicer extends Slicer {
     private static final int PENALTY = 16;
     private static final String SPRITE = "apexslicer.png";
 
-    public ApexSlicer(List<Point> polyline) {
-        super(polyline, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    public ApexSlicer(Point start, List<Point> polyline, int targetPointIndex) {
+        super(start, polyline, targetPointIndex, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    }
+
+    @Override
+    public void spawnOnDeath(List<Slicer> slicers) {
+        slicers.add(new MegaSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
+        slicers.add(new MegaSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
+        slicers.add(new MegaSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
+        slicers.add(new MegaSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
     }
 
 }

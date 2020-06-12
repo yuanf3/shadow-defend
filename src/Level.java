@@ -1,5 +1,6 @@
 import bagel.Input;
 import bagel.Keys;
+import bagel.MouseButtons;
 import bagel.map.TiledMap;
 import bagel.util.Point;
 
@@ -13,12 +14,13 @@ import java.util.Map;
 public class Level {
 
     private static final String WAVE_FILE = "res/levels/waves.txt";
-    private static final int CONVERSION = 1000;
+    private static final int MILLISEC_TO_SEC = 1000;
 
     private final Map<Integer, List<Event>> waves;
     private final TiledMap map;
     private final List<Point> polyline;
     private final List<Slicer> slicers;
+    private final List<Tower> towers;
     private final BuyPanel bPanel;
     private final StatusPanel sPanel;
     private final Player player;
@@ -34,15 +36,17 @@ public class Level {
         waves = new HashMap<>();
         map = new TiledMap("res/levels/" + levelNumber + ".tmx");
         polyline = map.getAllPolylines().get(0);
+
         slicers = new ArrayList<>();
+        towers = new ArrayList<>();
+        player = new Player();
         bPanel = new BuyPanel();
         sPanel = new StatusPanel();
-        player = new Player();
 
         levelFinished = false;
         currentWaveNumber = 0;
         readWavesFile();
-        setWaveStuff();
+        setWaveVariables();
     }
 
     private void readWavesFile() {
@@ -59,7 +63,7 @@ public class Level {
         }
     }
 
-    private void setWaveStuff() {
+    private void setWaveVariables() {
         currentWaveNumber++;
         currentEventNumber = 0;
         frameCount = Integer.MAX_VALUE;
@@ -68,19 +72,24 @@ public class Level {
         ShadowDefend.setStatus("Awaiting Start");
     }
 
-    private void spawnSlicer(String spawnType) {
+    private void drawPanels() {
+        sPanel.drawPanel(currentWaveNumber, ShadowDefend.getStatus(), player.getLives());
+        bPanel.drawPanel(player.getMoney());
+    }
+
+    public void spawnSlicer(String spawnType) {
         switch (spawnType) {
             case "slicer":
-                slicers.add(new RegularSlicer(polyline));
+                slicers.add(new RegularSlicer(polyline.get(0), polyline, 1));
                 break;
             case "superslicer":
-                slicers.add(new SuperSlicer(polyline));
+                slicers.add(new SuperSlicer(polyline.get(0), polyline, 1));
                 break;
             case "megaslicer":
-                slicers.add(new MegaSlicer(polyline));
+                slicers.add(new MegaSlicer(polyline.get(0), polyline, 1));
                 break;
             case "apexslicer":
-                slicers.add(new ApexSlicer(polyline));
+                slicers.add(new ApexSlicer(polyline.get(0), polyline, 1));
                 break;
             default:
                 break;
@@ -93,10 +102,13 @@ public class Level {
 
     public void update(Input input) {
         map.draw(0, 0, 0, 0, ShadowDefend.WIDTH, ShadowDefend.HEIGHT);
-        sPanel.drawPanel(currentWaveNumber, ShadowDefend.getStatus(), player.getLives());
 
         if (input.wasPressed(Keys.S)) {
             waveStarted = true;
+        }
+
+        for (Tower t : towers) {
+            t.update(input);
         }
 
         if (waveStarted) {
@@ -108,10 +120,12 @@ public class Level {
             String spawnType = currentEvent.getSpawnType();
 
             frameCount += ShadowDefend.getTimescale();
-            if (frameCount / ShadowDefend.FPS * CONVERSION >= duration && repeats != numRepeats) {
-                spawnSlicer(spawnType);
-                repeats++;
-                frameCount = 0;
+            if (frameCount / ShadowDefend.FPS * MILLISEC_TO_SEC >= duration) {
+                if (repeats < numRepeats) {
+                    spawnSlicer(spawnType);
+                    repeats++;
+                    frameCount = 0;
+                }
             }
 
             for (int i = slicers.size() - 1; i >= 0; i--) {
@@ -120,6 +134,7 @@ public class Level {
                 if (slicer.isDead()) {
                     int reward = slicer.getReward();
                     player.rewardMoney(reward);
+                    slicer.spawnOnDeath(slicers);
                     slicers.remove(i);
                 } else if (slicer.isFinished()) {
                     int penalty = slicer.getPenalty();
@@ -141,7 +156,7 @@ public class Level {
                         if (currentWaveNumber < numWaves) {
                             int reward = 150 + currentWaveNumber * 100;
                             player.rewardMoney(reward);
-                            setWaveStuff(); // End of wave
+                            setWaveVariables(); // End of wave
                         } else {
                             levelFinished = true; // End of level
                         }
@@ -150,5 +165,7 @@ public class Level {
             }
         }
 
+        drawPanels();
+        bPanel.update(input);
     }
 }

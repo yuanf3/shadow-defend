@@ -1,5 +1,6 @@
 import bagel.Font;
 import bagel.Image;
+import bagel.Input;
 import bagel.util.Point;
 
 public class BuyPanel {
@@ -8,23 +9,31 @@ public class BuyPanel {
     private static final Font KEYBINDS_FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 14);
     private static final Font MONEY_FONT = new Font("res/fonts/DejaVuSans-Bold.ttf", 48);
 
+    private static final Button button1 = new Button(new Point(64,40), "res/images/tank.png");
+    private static final Button button2 = new Button(new Point(184,40), "res/images/supertank.png");
+    private static final Button button3 = new Button(new Point(304,40), "res/images/airsupport.png");
+
     public void drawPanel(int money) {
-        double centreX = PANEL_IMAGE.getWidth() / 2;
-        double centreY = PANEL_IMAGE.getHeight() / 2;
+        PANEL_IMAGE.drawFromTopLeft(0, 0);
 
-        PANEL_IMAGE.draw(centreX, centreY);
-
-        // Display keybinds (not changeable)
-        String keybindsText =
+        // Display key binds (not changeable)
+        String keyBindsText =
             "Key binds:\n\n" +
             "S - Start wave\n" +
             "L - Increase Timescale\n" +
             "K - Decrease Timescale";
-        double keybindsTextWidth = KEYBINDS_FONT.getWidth(keybindsText);
-        KEYBINDS_FONT.drawString(keybindsText, centreX - keybindsTextWidth / 2, 20);
+        double panelWidth = PANEL_IMAGE.getWidth();
+        double keyBindsTextWidth = KEYBINDS_FONT.getWidth(keyBindsText);
+        KEYBINDS_FONT.drawString(keyBindsText, (panelWidth - keyBindsTextWidth) / 2, 20);
 
         // Display money
         String moneyText = "$" + money;
-        MONEY_FONT.drawString(moneyText, centreX*2 - 200, 65);
+        MONEY_FONT.drawString(moneyText, 824, 65);
+    }
+
+    public void update(Input input) {
+        button1.update(input);
+        button2.update(input);
+        button3.update(input);
     }
 }

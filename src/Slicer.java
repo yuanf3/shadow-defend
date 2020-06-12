@@ -1,6 +1,8 @@
 import bagel.Input;
 import bagel.util.Point;
 import bagel.util.Vector2;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,18 +27,20 @@ public abstract class Slicer extends Sprite {
      *
      * @param polyline The polyline that the slicer must traverse (must have at least 1 point)
      */
-    public Slicer(List<Point> polyline, int health, double speed, int reward, int penalty, String sprite) {
-        super(polyline.get(0), SPRITE_PATH + sprite);
+    public Slicer(Point start, List<Point> polyline, int targetPointIndex, int health, double speed, int reward, int penalty, String sprite) {
+        super(start, SPRITE_PATH + sprite);
+        this.polyline = polyline;
+        this.targetPointIndex = targetPointIndex;
         this.speed = speed;
         this.reward = reward;
         this.penalty = penalty;
-        this.polyline = polyline;
         currentHealth = health;
-        targetPointIndex = 1;
         finished = false;
         dead = false;
         lifetime = 120;
     }
+
+    public abstract void spawnOnDeath(List<Slicer> slicers);
 
     /**
      * Updates the current state of the slicer. The slicer moves towards its next target point in
@@ -47,10 +51,12 @@ public abstract class Slicer extends Sprite {
         lifetime--;
         if (lifetime == 0) {
             dead = true;
-        }
-        if (finished || dead) {
             return;
         }
+        if (finished) {
+            return;
+        }
+
         // Obtain current and target points, convert to vectors
         Point currentPoint = getCenter();
         Point targetPoint = polyline.get(targetPointIndex);
@@ -90,5 +96,13 @@ public abstract class Slicer extends Sprite {
 
     public int getReward() {
         return reward;
+    }
+
+    public List<Point> getPolyline() {
+        return polyline;
+    }
+
+    public int getTargetPointIndex() {
+        return targetPointIndex;
     }
 }

@@ -10,8 +10,14 @@ public class SuperSlicer extends Slicer {
     private static final int PENALTY = 2;
     private static final String SPRITE = "superslicer.png";
 
-    public SuperSlicer(List<Point> polyline) {
-        super(polyline, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    public SuperSlicer(Point start, List<Point> polyline, int targetPointIndex) {
+        super(start, polyline, targetPointIndex, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    }
+
+    @Override
+    public void spawnOnDeath(List<Slicer> slicers) {
+        slicers.add(new RegularSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
+        slicers.add(new RegularSlicer(this.getCenter(), this.getPolyline(), this.getTargetPointIndex()));
     }
 
 }

@@ -10,8 +10,13 @@ public class RegularSlicer extends Slicer {
     private static final int PENALTY = 1;
     private static final String SPRITE = "slicer.png";
 
-    public RegularSlicer(List<Point> polyline) {
-        super(polyline, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    public RegularSlicer(Point start, List<Point> polyline, int targetPointIndex) {
+        super(start, polyline, targetPointIndex, HEALTH, SPEED, REWARD, PENALTY, SPRITE);
+    }
+
+    @Override
+    public void spawnOnDeath(List<Slicer> slicers) {
+        return;
     }
 
 }
